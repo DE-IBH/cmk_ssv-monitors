@@ -10,6 +10,6 @@
            'web': []},
  'name': 'ssv_monitors',
  'title': 'DataCore SANsymphony-V Monitors (SNMP)',
- 'version': '0.1',
+ 'version': '0.2',
  'version.min_required': '1.2.4p5',
  'version.packaged': '1.2.4p5'}
