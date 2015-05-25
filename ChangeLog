@@ -1,0 +1,12 @@
+cmk_ssv-monitors (0.2) unstable; urgency=low
+
+  * Documentation updates.
+
+ -- Thomas Liske <liske@ibh.de>  
+
+cmk_ssv-monitors (0.1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Thomas Liske <liske@ibh.de>  Mon, 25 May 2015 15:15:16 +0200
+
