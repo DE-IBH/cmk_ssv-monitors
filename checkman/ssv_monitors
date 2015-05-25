@@ -1,0 +1,18 @@
+title: DataCore SANsymphony-V Monitors
+agents: snmp
+catalog: app/sansymphony
+author: Thomas Liske <liske@ibh.de>
+license: GPL
+distribution: check_mk
+description:
+ This check retrieves the monitor states of {DataCore SANsymphony-V}
+ installations using SNMP. You need to configure DataCore's SNMP
+ service:  http://www.datacore.com/SSV-WebHelp/SNMP_Support2.htm
+
+inventory:
+ One check per monitor item is created. The plugin supports auto
+ discovery.
+
+ Please note: You will get each monitor on each {DataCore Server} of
+ your cluster. You could use check_mk's rule engine to filter non-local
+ monitors (see also README.md).
