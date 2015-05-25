@@ -1,0 +1,109 @@
+#!/usr/bin/python
+# -*- encoding: utf-8; py-indent-offset: 4 -*-
+
+# cmk_ssv-monitors - check-mk plugin for SNMP-based DataCore SANsymphony-V monitoring
+#
+# Authors:
+#   Thomas Liske <liske@ibh.de>
+#
+# Copyright Holder:
+#   2015 (C) IBH IT-Service GmbH [http://www.ibh.de/]
+#
+# License:
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this package; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+# DCSW-SSV-MONITOR-MIB/monitorIds to be discovered ('Monitor' has been already stripped)
+ssv_monitors_inventory_types = [
+    "DiskPoolState",
+    "FallingThresholdPerf",
+    "LogicalDiskAccessRights",
+    "LogicalDiskDataStatus",
+    "LogicalDiskFailure",
+    "LogicalDiskState",
+    "PhysicalDiskState",
+#    "PoolMemberState",
+    "RisingThresholdPerf",
+    "ServerFcPortState",
+    "ServeriScsiPortState",
+    "ServerMachineLicense",
+    "ServerMachinePowerState",
+    "ServerMachineState",
+    "ServerMSiScsiInitiatorState",
+    "ServerPortLinkError",
+    "StreamLogicalDiskState",
+    "VirtualDiskAccessRights",
+    "VirtualDiskDataStatus",
+]
+
+# translate some monitor types
+ssv_monitors_inventory_descr = {
+    "FallingThresholdPerf" : "DiskPoolFree",
+    "RisingThresholdPerf" : "IOLatency",
+}
+
+# generate service name from SNMP values
+def get_name_ssv_monitors(stype0, sname):
+    import re
+    stype = re.sub(r'Monitor\W.*$', "", stype0)
+    if not stype in ssv_monitors_inventory_types:
+	return None
+    stype = re.sub(r'Stat(e|us)$', "", stype)
+    stype = re.sub(r'AccessRights$', "Access", stype)
+    stype = re.sub(r'^VirtualDisk', "vDisk", stype)
+    if ssv_monitors_inventory_descr.get(stype) != None:
+	stype = ssv_monitors_inventory_descr[stype]
+    return stype + ' ' + sname
+
+
+# generate list of valid monitors
+def inventory_ssv_monitors(checktyp, info):
+    inventory = []
+    for stype0, sname, shealth, strigger in info:
+	# ignore monitors in the state 'Undefined' or n/a
+	if shealth != 'Undefined' and strigger != 'Not Present':
+	    sid = get_name_ssv_monitors(stype0, sname);
+	    if sid != None:
+		inventory.append( (sid, None) );
+    return inventory
+
+# eval service state
+def check_ssv_monitors(item, _no_params, info):
+    for stype0, sname, shealth, strigger in info:
+	sid = get_name_ssv_monitors(stype0, sname);
+        if sid == item:
+            if shealth == 'Healthy':
+                return (0, "status is %s: %s" % (shealth, strigger))
+            elif shealth == 'Attention':
+                return (1, "status is %s: %s" % (shealth, strigger))
+            elif shealth == 'Warning':
+                return (1, "status is %s: %s" % (shealth, strigger))
+            elif shealth == 'Critical':
+                return (2, "status is %s: %s" % (shealth, strigger))
+            else:
+                return (3, "unknown health state '%s' (%s)" % (shealth, strigger))
+    return (3, "monitor '%s' not found in SNMP table" % item)
+
+
+# check registry
+check_info["ssv_monitors"] = {
+    'check_function':          check_ssv_monitors,
+    'inventory_function':      inventory_ssv_monitors,
+    'service_description':     'SSV %s',
+    'snmp_info':               ('.1.3.6.1.4.1.7652.1.1.1', ['2', '4', '5', '6']),
+    'snmp_scan_function':      \
+     lambda oid: oid(".1.3.6.1.4.1.7652.1.1.1.*") != None,
+    'group':                   'datacore_ssv',
+}
