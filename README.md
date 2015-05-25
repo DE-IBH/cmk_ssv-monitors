@@ -12,8 +12,8 @@ installations using SNMP.
 Install
 -------
 
-Download the provided check_mk package file *ssv_monitors-x.y.mkp* and
-install it using *check_mk*'s package manager [1]:
+Download the provided *check-mk package file* `ssv_monitors-x.y.mkp` and
+install it using *check-mk*'s package manager[1].
 
 [1] https://mathias-kettner.de/checkmk_packaging.html#H1:Installation,%20Update%20and%20Removal
 
@@ -27,10 +27,10 @@ Setup
 Before *ssv_monitors* is able to discover the DataCore Monitors you need
 to install and configure the *SNMP Service* service of the MS Windows OS.
 Additional the *DataCore SNMP Agent* service needs to be started and the
-start type should be changed to *Automatic*. Please consider to take a
-look at DataCore's SSV WebHelp about the SNMP setup:
+start type should be changed to `Automatic`. Please consider to take a
+look at DataCore's SSV WebHelp[2] about the SNMP setup.
 
-    http://www.datacore.com/SSV-WebHelp/SNMP_Support2.htm
+[2] http://www.datacore.com/SSV-WebHelp/SNMP_Support2.htm
 
 Once the SNMP setup is finished check_mk is able to discover serveral new
 services at your DataCore Servers.
@@ -39,7 +39,7 @@ services at your DataCore Servers.
 Due to DataCore's SNMP implementation any DataCore Server within a
 DataCore Cluster will return the same monitor items. We recommend to use
 a naming scheme for your physical disks, disk pools, server ports etc.
-to be able to use check-mk's rule engine to filter them.
+to be able to use *check-mk*'s rule engine to filter them.
 
 ```console
 $ check_mk -nv dcore1.fqdn
@@ -69,7 +69,7 @@ SSV vDiskData xenpool_01 OK - status is Healthy: Up to date
 Some of the monitor names already contain the DataCore Server name *dcore1*
 (_LogicalDisk*_, _ServerMachine_, _StreamLogicalDisk_). Disk pools and
 server ports need to be renamed to contain the hostname. To filter the
-non-local monitor items you could use rules like:
+non-local monitor items you could use *check-mk* rules:
 
 ```python
 ignored_services = [
@@ -79,6 +79,6 @@ ignored_services = [
 ```
 
 Each rule matches on the hostname. On *dcore1.fdqn* the rule filters any
-service containing dcore2 using a regex (\b is a word boundary, regex are
+service containing *dcore2* using a regex (`\b` is a word boundary, regex are
 case sensitive). If your cluster contains more than two service you need
 to extend the regex or ruleset accordingly.
