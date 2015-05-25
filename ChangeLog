@@ -1,0 +1,13 @@
+cmk_ssv-monitors (0.2) unstable; urgency=low
+
+  * Documentation updates.
+  * Improve service output format (add monitorDesc content).
+
+ -- Thomas Liske <liske@ibh.de>  Mon, 25 May 2015 16:53:53 +0200
+
+cmk_ssv-monitors (0.1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Thomas Liske <liske@ibh.de>  Mon, 25 May 2015 15:15:16 +0200
+

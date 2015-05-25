@@ -67,11 +67,18 @@ def get_name_ssv_monitors(stype0, sname):
 	stype = ssv_monitors_inventory_descr[stype]
     return stype + ' ' + sname
 
+# generate service state
+def get_state_ssv_monitors(shealth, strigger, sdescr0):
+    import re
+    sdescr = re.sub(r'^Monitors the ', "", sdescr0)
+    sdescr = re.sub(r's?\.$', "", sdescr)
+    return "%s: %s (%s)" % (sdescr, shealth, strigger)
+
 
 # generate list of valid monitors
 def inventory_ssv_monitors(checktyp, info):
     inventory = []
-    for stype0, sname, shealth, strigger in info:
+    for stype0, sname, shealth, strigger, sdescr0 in info:
 	# ignore monitors in the state 'Undefined' or n/a
 	if shealth != 'Undefined' and strigger != 'Not Present':
 	    sid = get_name_ssv_monitors(stype0, sname);
@@ -81,19 +88,20 @@ def inventory_ssv_monitors(checktyp, info):
 
 # eval service state
 def check_ssv_monitors(item, _no_params, info):
-    for stype0, sname, shealth, strigger in info:
+    for stype0, sname, shealth, strigger, sdescr0 in info:
 	sid = get_name_ssv_monitors(stype0, sname);
         if sid == item:
+	    sstate = get_state_ssv_monitors(shealth, strigger, sdescr0)
             if shealth == 'Healthy':
-                return (0, "status is %s: %s" % (shealth, strigger))
+                return (0, sstate)
             elif shealth == 'Attention':
-                return (1, "status is %s: %s" % (shealth, strigger))
+                return (1, sstate)
             elif shealth == 'Warning':
-                return (1, "status is %s: %s" % (shealth, strigger))
+                return (1, sstate)
             elif shealth == 'Critical':
-                return (2, "status is %s: %s" % (shealth, strigger))
+                return (2, sstate)
             else:
-                return (3, "unknown health state '%s' (%s)" % (shealth, strigger))
+                return (3, "UNKNOWN health state '%s' - (%s)" % (shealth, strigger))
     return (3, "monitor '%s' not found in SNMP table" % item)
 
 
@@ -102,7 +110,7 @@ check_info["ssv_monitors"] = {
     'check_function':          check_ssv_monitors,
     'inventory_function':      inventory_ssv_monitors,
     'service_description':     'SSV %s',
-    'snmp_info':               ('.1.3.6.1.4.1.7652.1.1.1', ['2', '4', '5', '6']),
+    'snmp_info':               ('.1.3.6.1.4.1.7652.1.1.1', ['2', '4', '5', '6', '7']),
     'snmp_scan_function':      \
      lambda oid: oid(".1.3.6.1.4.1.7652.1.1.1.*") != None,
     'group':                   'datacore_ssv',
