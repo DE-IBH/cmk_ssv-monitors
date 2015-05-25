@@ -6,7 +6,7 @@ About
 -----
 
 This check-mk package retrieves the monitor states of *DataCore
-SANsymphony-V* clusters using SNMP and creates corresponding services.
+SANsymphony-V* groups using SNMP and creates corresponding services.
 
 
 Install
@@ -56,7 +56,7 @@ ssv_monitors      249 new checks
 ```
 
 Due to DataCore's SNMP implementation any DataCore server within a
-DataCore Cluster will return the same monitor items. We recommend to use
+DataCore group will return the same monitor items. We recommend to use
 a naming scheme for your physical disks, disk pools, server ports etc.
 to be able to use *check-mk*'s rule engine to filter them.
 
@@ -99,5 +99,5 @@ ignored_services = [
 
 Each rule matches on the hostname. On *dcore1.fdqn* the rule filters any
 service containing *dcore2* using a regex (`\b` is a word boundary, regex are
-case sensitive). If your cluster contains more than two service you need
-to extend the regex or ruleset accordingly.
+case sensitive). If your group contains more than two servers you need to
+extend the regex or ruleset accordingly.
