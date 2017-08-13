@@ -8,6 +8,8 @@ About
 This check-mk package retrieves the monitor states of *DataCore
 SANsymphony-V* groups using SNMP and creates corresponding services.
 
+**This check is *obsolete* since Check_MK has native [support](https://mathias-kettner.com/checkmk_check_catalogue.html#Applications) to monitor DataCore SSV using the Check_MK Agent for windows. This repository is *unmaintained* and is only kept for the records!**
+
 
 Install
 -------
